@@ -1,0 +1,23 @@
+{
+    "creators": [ 
+        {
+            "name": "Ozadam, Hakan", 
+            "affiliation": "UT, Austin, TX, USA"
+        },
+        {
+            "name": "Cenik, Can",
+            "affiliation": "UT, Austin, TX, USA"
+        }
+    ], 
+    "keywords": [
+        "bioinformatics",
+        "genomics",
+        "ribosome",
+        "ribo-seq",
+        "Python"
+    ],
+    "description": "<p>Ribo is an HDF5 based file format for ribosome profiling data. RiboPy is a set of tools to create and read ribo files and generate plots.</p>",
+    "access_right": "open",
+    "license": "MIT",
+    "upload_type": "software"
+}
