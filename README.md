@@ -1,5 +1,8 @@
 [![Documentation Status](https://readthedocs.org/projects/ribopy/badge/?version=latest)](https://ribopy.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.com/ribosomeprofiling/ribopy.svg?branch=master)](https://travis-ci.com/ribosomeprofiling/ribopy)
+[![PyPI version](https://badge.fury.io/py/ribopy.svg)](https://badge.fury.io/py/ribopy)
+[![DOI](https://zenodo.org/badge/203284628.svg)](https://zenodo.org/badge/latestdoi/203284628)
+
 
 # RiboPy
 
