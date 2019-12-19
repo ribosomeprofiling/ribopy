@@ -23,16 +23,34 @@ author    = 'Hakan Ozadam'
 
 
 # -- General configuration ---------------------------------------------------
+from recommonmark.parser import CommonMarkParser
+
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx_click.ext', 
-              'sphinx.ext.autodoc', 
+extensions = ['sphinx_click.ext',
+              'sphinx.ext.autodoc',
+              'm2r',
+              'sphinx.ext.napoleon',
               'sphinx.ext.autosummary']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+
+
+# The suffix(es) of source filenames.
+# You can specify multiple suffix as a list of string:
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
+
+"""
+source_parsers = {
+    '.md': 'recommonmark.parser.CommonMarkParser'
+}
+"""
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -53,6 +71,10 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 master_doc = 'index'
+
+
+
+
 ############################################################
 # Tie inclusion of the version to the source code repository
 

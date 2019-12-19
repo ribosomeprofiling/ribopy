@@ -7,6 +7,8 @@ Python API
 .. toctree::
    :maxdepth: 1
 
+   api/api_walkthrough.rst
+
 
 Quick reference
 ---------------
@@ -16,43 +18,39 @@ Ribo Attributes
 
 Essential Ribo class attributes
 
-.. autosummary:: 
-    ribopy.ribo
-    ribopy.ribo.Ribo
-    ribopy.ribo.Ribo.experiments
-    ribopy.ribo.Ribo.minimum_length
-    ribopy.ribo.Ribo.maximum_length
-    ribopy.ribo.Ribo.metagene_radius
-    ribopy.ribo.Ribo.left_span
-    ribopy.ribo.Ribo.right_span
-    ribopy.ribo.Ribo.format_version
-    
-    
+.. autosummary::
+    ribopy.Ribo
+    ribopy.Ribo.experiments
+    ribopy.Ribo.minimum_length
+    ribopy.Ribo.maximum_length
+    ribopy.Ribo.metagene_radius
+    ribopy.Ribo.left_span
+    ribopy.Ribo.right_span
+    ribopy.Ribo.format_version
+
+
 Getter Functions
 ~~~~~~~~~~~~~~~~
 Methods for reading ribosome profiling data.
-    
-.. autosummary::    
-    ribopy.ribo.Ribo.get_metagene
-    ribopy.ribo.Ribo.get_region_counts
-    ribopy.ribo.Ribo.get_coverage
-    ribopy.ribo.Ribo.get_rnaseq
-    
-    
+
+.. autosummary::
+    ribopy.Ribo.get_metagene
+    ribopy.Ribo.get_region_counts
+    ribopy.Ribo.get_coverage
+    ribopy.Ribo.get_rnaseq
+
 Plot Functions
 ~~~~~~~~~~~~~~
 Some essential plots for ribosome profiling analysis,
-    
-.. autosummary::
-    ribopy.ribo.Ribo.plot_metagene
-    ribopy.ribo.Ribo.plot_lengthdist
-    ribopy.ribo.Ribo.plot_region_counts
 
-    
+.. autosummary::
+    ribopy.Ribo.plot_metagene
+    ribopy.Ribo.plot_lengthdist
+    ribopy.Ribo.plot_region_counts
+
+
 Ribo
 ----
 
-.. autoclass:: ribopy.ribo.Ribo
+.. autoclass:: ribopy.Ribo
     :members:
- 
-    
