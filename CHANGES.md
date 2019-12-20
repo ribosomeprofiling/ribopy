@@ -1,10 +1,9 @@
 # Release notes
 
-## [Latest](https://github.com/ribosomeprofiling/ribopy/tree/v0.0.1)
+## [Latest](https://github.com/ribosomeprofiling/ribopy/)
 
 ### Enhancements
 
-* Added a walkthrough of RiboPy in the documentation.
 * Improved documentation
 
 ## [v0.0.0](https://github.com/ribosomeprofiling/ribopy/tree/v0.0.0)

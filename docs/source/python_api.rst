@@ -3,12 +3,7 @@
 Python API
 ==========
 
-
-.. toctree::
-   :maxdepth: 1
-
-   api/api_walkthrough.rst
-
+`A walk-through of Python API <https://ribosomeprofiling.github.io/ribopy/api_walkthrough.html>`_
 
 Quick reference
 ---------------

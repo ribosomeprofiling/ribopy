@@ -4,11 +4,9 @@ Quickstart
 There are two interfaces, available in RiboPy, to work with ribo files:
 Command Line Interface(CLI) and Application PRogramming Interface (API).
 
-.. toctree::
-   :maxdepth: 1
+`A walk-through of Python API <https://ribosomeprofiling.github.io/ribopy/api_walkthrough.html>`_
 
-   api/api_walkthrough.rst
-   cli/cli_walkthrough.rst
+`A walk-through of Python CLI <https://ribosomeprofiling.github.io/ribopy/cli_walkthrough.html>`_
 
 Also, for R users, a walkthrough of RiboR is in this link_.
 

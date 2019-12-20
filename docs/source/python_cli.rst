@@ -3,12 +3,7 @@
 Python CLI
 ==========
 
-
-.. toctree::
-   :maxdepth: 1
-
-   cli/cli_walkthrough.rst
-
+`A walk-through of Python CLI <https://ribosomeprofiling.github.io/ribopy/cli_walkthrough.html>`_
 
 .. click:: ribopy.cli.main:cli
   :prog: CLI Reference
