@@ -27,26 +27,26 @@ class TestCreate(unittest.TestCase):
         self.ref_len_file    = StringIO(TRANSCRIPT_LENGTHS)
         self.annotation_file = StringIO(TRANSCRIPT_ANNOTATION)
         self.alignment_file  = StringIO(READ_SET_1)
-        self.handle          = h5py.File(BytesIO())
+        self.handle          = h5py.File(BytesIO(), "w")
 
         create.create_ribo(
-            self.handle, 
-            experiment_name    = "merzifon", 
+            self.handle,
+            experiment_name    = "merzifon",
             alignment_file  = self.alignment_file,
             metagene_radius = 3,
-            length_min      = 2, 
+            length_min      = 2,
             length_max      = 5,
-            left_span       = 3, 
+            left_span       = 3,
             right_span      = 2,
             reference_name  = "appris_human_v2",
-            lengths_file    = self.ref_len_file, 
+            lengths_file    = self.ref_len_file,
             annotation_file = self.annotation_file)
-        
+
     def tearDown(self):
         self.handle.close()
 
 
-    def test_get_reference_names(self):   
+    def test_get_reference_names(self):
         ref_names = get_reference_names(self.handle)
         self.assertListEqual( list(ref_names), ["GAPDH","VEGFA","MYC","BRCA"])
 
@@ -60,7 +60,7 @@ class TestCreate(unittest.TestCase):
 
     def test_get_region_boundaries(self):
         all_boundaries = get_region_boundaries(self.handle)
-        self.assertEqual( all_boundaries[1][0][1], 0 ) 
+        self.assertEqual( all_boundaries[1][0][1], 0 )
         self.assertEqual( all_boundaries[3][2][0], 561 )
 
     def test_get_experiment_names(self):
@@ -77,5 +77,5 @@ class TestCreate(unittest.TestCase):
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

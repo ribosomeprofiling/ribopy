@@ -104,7 +104,7 @@ MYC: [0, 3, 0, 0, 0 ]
 FLT1: [4, 2, 0, 3, 1]
 """
 
-ACTUAL_START_SITE_COVERAGE = np.array( [[1, 0, 0, 0, 0], 
+ACTUAL_START_SITE_COVERAGE = np.array( [[1, 0, 0, 0, 0],
                                 [0, 0, 2, 1, 0],
                                 [6, 4, 1, 5, 2],
                                 [0, 0, 3, 0, 0]] )
@@ -150,21 +150,21 @@ class TestCreate(unittest.TestCase):
         self.ref_len_file    = StringIO(TRANSCRIPT_LENGTHS)
         self.annotation_file = StringIO(TRANSCRIPT_ANNOTATION)
         self.alignment_file  = StringIO(READ_SET_1)
-        self.handle          = h5py.File(BytesIO())
-        
+        self.handle          = h5py.File(BytesIO(), "w")
+
     def tearDown(self):
         self.handle.close()
-        
+
 
     def test_start_site_coverage_solo(self):
         input_stream = StringIO(READ_SET_1)
         ref_names , ref_lengths = _get_transcripts(TRANSCRIPT_LENGTHS)
 
-        coverage = find_coverage(input_stream,  
+        coverage = find_coverage(input_stream,
                                  ref_names , ref_lengths )
 
-        site_coverage = find_site_coverage(coverage   = coverage, 
-                                           radius     = 2, 
+        site_coverage = find_site_coverage(coverage   = coverage,
+                                           radius     = 2,
                                            annotation = ANNOTATION,
                                            site_type  = "start")
 
@@ -174,12 +174,12 @@ class TestCreate(unittest.TestCase):
     def test_stop_site_coverage_solo(self):
         input_stream = StringIO(READ_SET_1)
         ref_names , ref_lengths = _get_transcripts(TRANSCRIPT_LENGTHS)
-        
-        coverage = find_coverage(input_stream,  
+
+        coverage = find_coverage(input_stream,
                                  ref_names , ref_lengths )
 
-        site_coverage = find_site_coverage(coverage   = coverage, 
-                                           radius     = 2, 
+        site_coverage = find_site_coverage(coverage   = coverage,
+                                           radius     = 2,
                                            annotation = ANNOTATION,
                                            site_type  = "stop")
 
@@ -187,24 +187,24 @@ class TestCreate(unittest.TestCase):
         self.assertTrue( np.all( comparison ) )
 
     def test_start_site_coverage_from_ribo(self):
-        create.initialize(self.handle, "merzifon", 
+        create.initialize(self.handle, "merzifon",
                           reference_name = "appris_human_v2")
         create.set_reference_names_and_lengths(
-                                       self.handle, 
+                                       self.handle,
                                        self.ref_len_file)
-        create.set_annotation( 
-            h5_handle       = self.handle, 
+        create.set_annotation(
+            h5_handle       = self.handle,
             annotation_lines = TRANSCRIPT_ANNOTATION.split("\n") )
 
         ribo_annotation = get_region_boundaries(self.handle)
         ref_names       = get_reference_names(self.handle)
         ref_lengths     = get_reference_lengths(self.handle)
         input_stream    = StringIO(READ_SET_1)
-        coverage        = find_coverage(input_stream,  
+        coverage        = find_coverage(input_stream,
                                         ref_names , ref_lengths )
 
-        site_coverage = find_site_coverage(coverage   = coverage, 
-                                           radius     = 2, 
+        site_coverage = find_site_coverage(coverage   = coverage,
+                                           radius     = 2,
                                            annotation = ribo_annotation,
                                            site_type  = "start")
 
@@ -213,5 +213,5 @@ class TestCreate(unittest.TestCase):
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

@@ -52,14 +52,14 @@ class TestCLIBase(unittest.TestCase):
       """
 
       command_str    = tuple( map( str, command ) )
-      process        = subprocess.Popen(command_str, 
+      process        = subprocess.Popen(command_str,
                                         stdout = subprocess.PIPE,
                                         stderr = subprocess.PIPE)
       output, error  = process.communicate()
       output_str     = output.decode()
       error_str      = error.decode()
 
-      return (output_str, error_str) 
+      return (output_str, error_str)
 
 
 
@@ -84,16 +84,16 @@ class TestCLIBase(unittest.TestCase):
             os.remove(ribo_output_file)
 
         create_command = ["ribopy", "create",
-                          "--alignmentfile",  ALIGNMENT_FILE_1,  
+                          "--alignmentfile",  ALIGNMENT_FILE_1,
                           "--name",           "merzifon",
                           "--reference",      "hg38",
-                          "--lengths",        REF_LEN_FILE, 
+                          "--lengths",        REF_LEN_FILE,
                           "--annotation",     ANNOTATION_FILE,
-                          "--metageneradius", METAGENE_RADIUS, 
-                          "--leftspan",       LEFT_SPAN, 
+                          "--metageneradius", METAGENE_RADIUS,
+                          "--leftspan",       LEFT_SPAN,
                           "--rightspan",      RIGHT_SPAN,
-                          "--lengthmin",      2, 
-                          "--lengthmax",      5, 
+                          "--lengthmin",      2,
+                          "--lengthmax",      5,
                           "-n",               4,
                           ribo_output_file]
 
@@ -106,11 +106,11 @@ class TestCLIBase(unittest.TestCase):
     def tearDown(self):
         [ os.remove(f) for f in self.tmp_files ]
 
-#######################################################################  
+#######################################################################
 
 
 class TestCLIRNASEQ(TestCLIBase):
-    
+
     def test_set_rnaseq(self):
         command_pieces = ["ribopy", "rnaseq", "set",
                           "--name",   "merzifon",
@@ -118,7 +118,7 @@ class TestCLIRNASEQ(TestCLIBase):
                            ribo_output_file]
 
         output, error   = self.run_command(command_pieces)
-        # Check that we don't get error messages        
+        # Check that we don't get error messages
         self.assertEqual(output, "")
         self.assertEqual(error, "")
 
@@ -132,31 +132,31 @@ class TestCLIRNASEQ(TestCLIBase):
                            ribo_output_file]
 
         output, error   = self.run_command(command_pieces)
-        
+
         self.assertEqual(output, "")
         self.assertEqual(error, "")
-        
+
     def test_set_rnaseq_from_bam(self):
-                    
+
         if not shutil.which('bamToBed'):
             raise FileNotFoundError("Could not find the executable bamToBed")
         if not shutil.which('bedToBam'):
             raise FileNotFoundError("Could not find the executable bedToBam")
-            
+
         pipe_t = pipes.Template()
         pipe_t.append("bedToBam -g {}"\
                       .format( REF_LEN_FILE), "--")
-      
+
         f = pipe_t.open(RNASEQ_BAM_FILE, 'w')
         f.write(rnaseq_data.RNASEQ_READS)
         f.close()
-        
+
         command_pieces = ["ribopy", "rnaseq", "set",
                           "--name",      "merzifon",
                           "--alignment", RNASEQ_BAM_FILE,
                           "--format",    "bam",
                            ribo_output_file]
-                           
+
         output, error   = self.run_command(command_pieces)
 
         command_pieces = ["ribopy", "rnaseq", "get",
@@ -164,54 +164,54 @@ class TestCLIRNASEQ(TestCLIBase):
                            ribo_output_file]
 
         output, error   = self.run_command(command_pieces)
-        
-        output_df = pd.read_csv(StringIO(output), 
+
+        output_df = pd.read_csv(StringIO(output),
                                 index_col = (0,1),
                                 header = 0,
                                 sep = "\t")
-        
+
         self.assertTrue( all(np.isclose( output_df.loc[("merzifon", "MYC"),:],
                              [0, 1, 0, 0, 2] )  ) )
         os.remove(RNASEQ_BAM_FILE)
-        
+
     def test_set_rnaseq_from_self_table(self):
         intermediate_tsv_file = "int_rnaseq.tsv"
-        
+
         command_pieces = ["ribopy", "rnaseq", "set",
                           "--name",   "merzifon",
                           "--alignment", RNASEQ_BED_FILE_1,
                            ribo_output_file]
         output, error  = self.run_command(command_pieces)
-        
+
         command_pieces = ["ribopy", "rnaseq", "get",
                           "--name", "merzifon",
-                          "--out", intermediate_tsv_file, 
-                           ribo_output_file]                           
+                          "--out", intermediate_tsv_file,
+                           ribo_output_file]
         output, error  = self.run_command(command_pieces)
-        
+
         command_pieces = ["ribopy",    "rnaseq", "delete",
                           "--name",   "merzifon",
                           "--force",
-                           ribo_output_file]                       
+                           ribo_output_file]
         output, error  = self.run_command(command_pieces)
-        
+
         command_pieces = ["ribopy", "rnaseq", "set",
                           "--name",   "merzifon",
                           "--counts", intermediate_tsv_file,
                           "--force",
                            ribo_output_file]
         output, error  = self.run_command(command_pieces)
-                           
+
         command_pieces = ["ribopy", "rnaseq", "get",
                           "--name", "merzifon",
                            ribo_output_file]
         output, error  = self.run_command(command_pieces)
-        
-        output_df = pd.read_csv(StringIO(output), 
+
+        output_df = pd.read_csv(StringIO(output),
                                 index_col = (0,1),
                                 header = 0,
                                 sep = "\t")
-                                
+
         self.assertTrue( all(np.isclose( output_df.loc[("merzifon", "GAPDH"),:],
                              [1, 0, 2, 1, 3] )  ) )
         os.remove(intermediate_tsv_file)
@@ -234,11 +234,11 @@ class TestCLIRNASEQ(TestCLIBase):
         output_lines          = output.split("\n")
         #VEGFA_name, VEGFA_exp = output_lines[2].split()
         ### More test here later
-        output_df = pd.read_csv(StringIO(output), 
+        output_df = pd.read_csv(StringIO(output),
                                 index_col = (0,1),
                                 header = 0,
                                 sep = "\t")
-        
+
         self.assertTrue( all(np.isclose( output_df.loc[("merzifon", "VEGFA"),:],
                              [0, 1, 3, 0, 1] )  ) )
         #self.assertEqual(VEGFA_name, "VEGFA")
@@ -262,7 +262,7 @@ class TestCLIRNASEQ(TestCLIBase):
         output, error   = self.run_command(command_pieces)
         print(output, error)
 
-        ribo = h5py.File(ribo_output_file)
+        ribo = h5py.File(ribo_output_file, "r")
 
         self.assertTrue( RNASEQ_name not in \
                          ribo[EXPERIMENTS_name]["merzifon"].keys() )
@@ -271,5 +271,5 @@ class TestCLIRNASEQ(TestCLIBase):
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

@@ -17,10 +17,10 @@ from .core.exceptions import *
 from .core.create_experiment import create_experiment
 from .core.verify import make_cli_function
 from .io.file import (open_by_extension,
-                      read_all_lines, 
-                      flex_open) 
+                      read_all_lines,
+                      flex_open)
 from ._version import __format_version__,\
-                      __version__ 
+                      __version__
 
 ########################################################
 
@@ -34,24 +34,24 @@ def _get_experiment_name_from_filepath(filepath):
     basename        = os.path.basename(filepath)
     basename_pieces = basename.split(".")
     experiment_name = ".".join(basename_pieces[:-1])
-    
+
     return experiment_name
 
 def _check_experiment_name(name):
     """
     Raises an exception if the name is invalid.
     """
-    
+
     error_message = \
     """
-    Invalid Experiment Name! 
+    Invalid Experiment Name!
     Name must contain at least one alphanumeric character and
     it can only contain alphanumeric characters, '_', '-' and '.'.
     """
-    
-    alphanum_test   = re.match("[a-zA-Z0-9]+", name)
-    valid_char_test = re.fullmatch("[a-zA-Z0-9\_\-.]+", name)
-    
+
+    alphanum_test   = re.match(r"[a-zA-Z0-9]+", name)
+    valid_char_test = re.fullmatch(r"[a-zA-Z0-9_.\-]+", name)
+
     if alphanum_test and valid_char_test:
         return True
     else:
@@ -62,18 +62,18 @@ def initialize(h5_handle, experiment_name, reference_name):
     """
     Basic initialization of a ribo file.
     It creates the hdf5 groups for experiments
-    and reference.  
+    and reference.
 
     Parameters
     ----------
     h5_handle: h5py.File
         Handle for writable hdf5 file
 
-    experiment_name : str 
+    experiment_name : str
         A file group under
         experiments is created with this name
 
-    reference_name : str 
+    reference_name : str
         User defined name of the reference
 
     Returns
@@ -83,7 +83,7 @@ def initialize(h5_handle, experiment_name, reference_name):
     """
 
     _check_experiment_name(experiment_name)
-    
+
     h5_handle.create_group(EXPERIMENTS_name)
     h5_handle.create_group(REFERENCE_name)
     h5_handle[REFERENCE_name].attrs[ATTRS_REFERENCE]      = reference_name
@@ -99,8 +99,8 @@ def set_reference_names_and_lengths(h5_handle, lengths_file):
     Creates reference names and lengths fields in the references part
     of the ribo file.
 
-    The order (of transcripts) is crucial because 
-    the same order will be kept in all parts of the file.  
+    The order (of transcripts) is crucial because
+    the same order will be kept in all parts of the file.
 
 
     Parameters
@@ -109,7 +109,7 @@ def set_reference_names_and_lengths(h5_handle, lengths_file):
     h5_handle: h5py.File
         Handle for writable hdf5 file
 
-    lengths_file : str 
+    lengths_file : str
         Tab separated file of two columns
         First column: Transcript names
         Second Column: Transcript lengths
@@ -121,30 +121,30 @@ def set_reference_names_and_lengths(h5_handle, lengths_file):
     """
 
     reference_handle = h5_handle[REFERENCE_name]
-    reference_df     = pd.read_csv(lengths_file, sep = "\s+", 
+    reference_df     = pd.read_csv(lengths_file, sep = r"\s+",
                                names = ["name","length"])
     name_lengths     = list(map(len, reference_df["name"]) )
     max_len          = max(name_lengths)
     dt               = np.dtype("S" + str(max_len))
     ref_names        = np.array( reference_df["name"], dtype = dt )
-    ref_lengths      = np.array( reference_df["length"], 
+    ref_lengths      = np.array( reference_df["length"],
                                  dtype = np.uint32 )
 
-    reference_handle.create_dataset( 
-        REF_DG_REFERENCE_NAMES, 
-        data        = ref_names, 
-        dtype       = dt, 
-        compression = DEFAULT_COMPRESSION, 
+    reference_handle.create_dataset(
+        REF_DG_REFERENCE_NAMES,
+        data        = ref_names,
+        dtype       = dt,
+        compression = DEFAULT_COMPRESSION,
         fletcher32  = DEFAULT_FLETCHER32 )
 
-    reference_handle.create_dataset( 
-        REF_DG_REFERENCE_LENGTHS, 
-        data        = ref_lengths, 
-        dtype       = np.uint32, 
-        compression = DEFAULT_COMPRESSION, 
+    reference_handle.create_dataset(
+        REF_DG_REFERENCE_LENGTHS,
+        data        = ref_lengths,
+        dtype       = np.uint32,
+        compression = DEFAULT_COMPRESSION,
         fletcher32  = DEFAULT_FLETCHER32 )
-    
-    return ( get_reference_names(h5_handle) , 
+
+    return ( get_reference_names(h5_handle) ,
              get_reference_lengths(h5_handle))
 
 #########################################################
@@ -153,7 +153,7 @@ def post_check_annotation(h5_handle, pre_annotation):
     """
     More sanity checks for the annotation.
     See the function "check_annotation" for details.
-    """ 
+    """
 
     error_base     = "Annotation error:\n"
     error_message  = ""
@@ -164,10 +164,19 @@ def post_check_annotation(h5_handle, pre_annotation):
     for this_name, boundaries in pre_annotation.items():
         utr5, cds , utr3 = tuple(boundaries.values())
 
-        if cds[0] == cds[1]:
+        if cds[0] >= cds[1]:
             error_message +=  this_name + \
                               " : must have a positive length CDS\n"
 
+        if utr5[0] > utr5[1]:
+            error_message +=  this_name + \
+                              " : must have a non-negative length 5' UTR\n"
+
+        if utr3[0] > utr3[1]:
+            error_message +=  this_name + \
+                              " : must have a non-negative length 3' UTR\n"
+
+        """
         if utr3[0] == utr3[1]:
             error_message +=  this_name + \
                               " : must have a positive length UTR3\n"
@@ -184,7 +193,7 @@ def post_check_annotation(h5_handle, pre_annotation):
             error_message += this_name + \
                 " : utr3 3 prime (right) boundary " + \
                 "must be equal to the gene length.\n"
-
+        """
         if error_message:
             raise AnnotationError(error_base + error_message)
 
@@ -218,7 +227,7 @@ def check_annotation( h5_handle, annotation_lines ):
     Parameters
     ----------
 
-    h5_handle:  h5py.File 
+    h5_handle:  h5py.File
         Handle to an open, readable/ writable hdf5 file
 
     annotation_lines: list
@@ -234,8 +243,8 @@ def check_annotation( h5_handle, annotation_lines ):
     recorded_annotations = OrderedDict()
     for r in ref_names:
         recorded_annotations[r] = \
-            OrderedDict( ( (UTR5_name, [0,0]), 
-                         (CDS_name, [0, 0]), 
+            OrderedDict( ( (UTR5_name, [0,0]),
+                         (CDS_name, [0, 0]),
                          (UTR3_name, [0,0]) ) )
 
 
@@ -285,10 +294,10 @@ def set_annotation( h5_handle, annotation_lines ):
     Each row is for one reference (in the same order as
     reference names and lengths)
     The entries are coming from BED coordinates
-    <UTR5 NED POS> , <CDS END POS>, <UTR3 END POSITION>
+    <UTR5 END POS> , <CDS END POS>, <UTR3 END POSITION>
     Since UTR5 begins with 0, and the end of one region is
     the start of the next one, the above numbers give us all
-    region boundaries. 
+    region boundaries.
 
     Parameters
     ----------
@@ -296,7 +305,7 @@ def set_annotation( h5_handle, annotation_lines ):
     h5_handle: h5py.File
         Handle to an open, readable/ writable hdf5 file
 
-    annotation_lines: list 
+    annotation_lines: list
         An array of bed file entries
 
     Returns
@@ -310,11 +319,11 @@ def set_annotation( h5_handle, annotation_lines ):
                 their order in get_reference_names(ribo)
 
                 Thus each triplet is of the form
-                ( (UTR5_left, UTR5_right), (CDS_left, CDS_right), 
+                ( (UTR5_left, UTR5_right), (CDS_left, CDS_right),
                   (UTR3_left, UTR3_right) )
 
                 These coordinates are in bed conventions.
-                Therefore the left coordinates ARE inclusive 
+                Therefore the left coordinates ARE inclusive
                 and the right coordinates are NOT.
                 The coordinates are 0-based.
 
@@ -327,8 +336,8 @@ def set_annotation( h5_handle, annotation_lines ):
                 must hold.
     """
 
-    # Raises an AnnotationError exception if 
-    # there is a porblem with the annotation 
+    # Raises an AnnotationError exception if
+    # there is a porblem with the annotation
     check_annotation(h5_handle, annotation_lines)
 
     number_of_refs = get_number_of_references(h5_handle)
@@ -336,8 +345,8 @@ def set_annotation( h5_handle, annotation_lines ):
 
     # Initialize all regions to zeros
     for region in REGION_names:
-        region_dict[region] = np.full(shape      = (number_of_refs), 
-                                      fill_value = 0, 
+        region_dict[region] = np.full(shape      = (number_of_refs),
+                                      fill_value = 0,
                                       dtype      = np.uint32)
 
     ref_index   = 0
@@ -370,26 +379,26 @@ def set_annotation( h5_handle, annotation_lines ):
 
 
     concatenated_arrays = np.concatenate( tuple(region_dict.values()) )
-    ref_array           = np.reshape(concatenated_arrays, 
-                                      newshape = (number_of_refs, 3), 
+    ref_array           = np.reshape(concatenated_arrays,
+                                      newshape = (number_of_refs, 3),
                                       order    = "F" )
 
     h5_handle[REFERENCE_name].create_dataset(
                                 REF_ANNOTATION_NAME,
                                 data        = ref_array,
                                 dtype       = np.uint32,
-                                compression = DEFAULT_COMPRESSION, 
+                                compression = DEFAULT_COMPRESSION,
                                 fletcher32  = DEFAULT_FLETCHER32)
 
-    boundaries = tuple(map( lambda x: 
-                              [(0, x[0]) , (x[0], x[1]), (x[1], x[2])] , 
+    boundaries = tuple(map( lambda x:
+                              [(0, x[0]) , (x[0], x[1]), (x[1], x[2])] ,
                             ref_array ) )
 
     return boundaries
-  
+
 ##########################################################
 
-###########################################################    
+###########################################################
 
 def set_coverage_vectors_individual(pivots, radius):
     """
@@ -402,7 +411,7 @@ def set_coverage_vectors_individual(pivots, radius):
     any end of the start / stop site.
     So we initialize contribution to 0, and increement the
     parts that are covered by the transcript.
-    
+
     Example:
     If our transcript T is as follows:
     (Bed format coordinates)
@@ -416,9 +425,9 @@ def set_coverage_vectors_individual(pivots, radius):
     Note that the left-most contribution is 0
     because this transcript has only 2 nucleotides on UTR5
 
-    This vector 2 will be added to result, 
+    This vector 2 will be added to result,
     along with contribution of other transcripts,
-    to compute the overal contribution around the start site.  
+    to compute the overal contribution around the start site.
 
     """
     result = np.zeros( 2*radius + 1, dtype = np.uint32 )
@@ -426,27 +435,28 @@ def set_coverage_vectors_individual(pivots, radius):
     for p in tuple(pivots):
         this_coverage = np.zeros( 2*radius + 1, dtype = np.uint32 )
         start_index   = max( radius - p[1] , 0)
-        end_index     = radius + 1 + min( radius , p[2] - p[1] )
+        p2_minus_p1   = max( np.int16(p[2]) - np.int16(p[1]), 0   )
+        end_index     = radius + 1 + min( radius , p2_minus_p1 )
 
         this_coverage[start_index:end_index] = 1
         result += this_coverage
 
     return result
 
-###########################################################    
+###########################################################
 
 def set_coverage_vectors(ribo, radius):
     """
     Coverage vectors hold the contribution of the transcripts
     around start / stop sites .
     These vectors can be used to normalize metagene data
-    ( start / stop sites) later. 
+    ( start / stop sites) later.
     """
 
     boundaries        = get_region_boundaries(ribo)
-    start_site_pivots = map( lambda x: ( 0, x[1][0], x[2][1] ) , 
+    start_site_pivots = map( lambda x: ( 0, x[1][0], x[2][1] ) ,
                                boundaries )
-    stop_site_pivots  = map( lambda x: ( 0, x[1][1], x[2][1] ) , 
+    stop_site_pivots  = map( lambda x: ( 0, x[1][1], x[2][1] ) ,
                                boundaries )
 
     start_site_boundaries = \
@@ -455,26 +465,26 @@ def set_coverage_vectors(ribo, radius):
        set_coverage_vectors_individual(stop_site_pivots, radius)
 
     ribo[REFERENCE_name].create_dataset(
-                           REF_DG_START_SITE_COV, 
-                           data       = start_site_boundaries, 
+                           REF_DG_START_SITE_COV,
+                           data       = start_site_boundaries,
                            dtype      = np.uint32,
                            fletcher32 = DEFAULT_FLETCHER32 )
     ribo[REFERENCE_name].create_dataset(
-                           REF_DG_STOP_SITE_COV, 
-                           data       = stop_site_boundaries, 
+                           REF_DG_STOP_SITE_COV,
+                           data       = stop_site_boundaries,
                            dtype      = np.uint32,
                            fletcher32 = DEFAULT_FLETCHER32 )
 
 ###########################################################
 
-def set_ribo_info(ribo, 
-                  length_min, length_max, 
+def set_ribo_info(ribo,
+                  length_min, length_max,
                   reference_name,
-                  metagene_radius, 
+                  metagene_radius,
                   left_span, right_span):
 
     """
-    Essential ribo metadata is stored 
+    Essential ribo metadata is stored
     in the atrributes of the hdf5 file.
     These attributes are crucial and shouldn't be changed
     after file creation.
@@ -501,15 +511,15 @@ def _get_metadata(file_path):
             meta_str = metastream.read()
         return meta_str
 
-##########################################################    
+##########################################################
 
-def create_ribo(ribo, 
-                experiment_name, 
+def create_ribo(ribo,
+                experiment_name,
                 alignment_file,
                 reference_name,
-                lengths_file, 
+                lengths_file,
                 annotation_file,
-                metagene_radius, 
+                metagene_radius,
                 left_span, right_span,
                 length_min, length_max,
                 alignment_format    = 'bed',
@@ -529,27 +539,27 @@ def create_ribo(ribo,
     The essential input, as single value parameters, are:
        experiment name and reference name,
        metagene_radius, left_span, right_span,
-       length_min, length_max.    
+       length_min, length_max.
 
-    It writes annotation, metadata and 
+    It writes annotation, metadata and
     ribosome profiling data of the experiment
     to the given ribo file handle.
 
     Parameters
     ----------
-    ribo :  h5py.File 
+    ribo :  h5py.File
        Handle for the open hdf5 file
 
     experiment_name : str
                The name of the single experiment in the ribo file.
-               An datagroup under experiments will be created accordingly 
-    
+               An datagroup under experiments will be created accordingly
+
     lengths_file : str
-               File path. 
+               File path.
                A tab separated file containing the reference lengths
                The first column holds the  reference names
                The second column holds the reference lengths
-               Note that the reference names 
+               Note that the reference names
                should be exactly the same as in
                the alignment file and the annotation file
                in the SAME ORDER
@@ -569,7 +579,7 @@ def create_ribo(ribo,
     annotation_file : str
                   File path.
                   A bed file annotation the UTR5, CDS and UTR3
-                  regions of the transcirpts. 
+                  regions of the transcirpts.
                   This can also be a StringIO object
 
     metagene_radius : int
@@ -590,11 +600,11 @@ def create_ribo(ribo,
 
     length_max : int
              Maximum read length to be counted in the ribosome profiling.
-             Inclusive. Note that all read lengths from 
+             Inclusive. Note that all read lengths from
              length_min to lenght max are counted.
 
     store_coverage: Boolean
-        Store the coverage, at length level, for all transcripts. 
+        Store the coverage, at length level, for all transcripts.
 
     ribo_metadata : str, dict or IOStream
         User-provided metadata of the ribo file in yaml format.
@@ -603,14 +613,14 @@ def create_ribo(ribo,
         User-provided metadata of the experiment in yaml format.
 
     nprocess : int
-               Number of parallel processes for 
+               Number of parallel processes for
                extracting the ribosome profiling data.
 
     tmp_file_prefix : int
                       File name prefix for the intermediate files
                       created (and later deleted).
-                      For example, reads of the same length 
-                      are collected in one inetermediate file. 
+                      For example, reads of the same length
+                      are collected in one inetermediate file.
 
     Returns
     -------
@@ -623,48 +633,48 @@ def create_ribo(ribo,
     (ref_names, ref_lengths) = \
        set_reference_names_and_lengths(ribo , lengths_file)
 
-    annotation = set_annotation( ribo, 
+    annotation = set_annotation( ribo,
                                  read_all_lines(annotation_file) )
 
     set_coverage_vectors(ribo, metagene_radius)
 
-    set_ribo_info(ribo, 
+    set_ribo_info(ribo,
                   length_min, length_max,
-                  reference_name, 
-                  metagene_radius, 
+                  reference_name,
+                  metagene_radius,
                   left_span, right_span)
 
     alignment_file_handle = \
-            get_alignment_file_handle(alignment_file, 
+            get_alignment_file_handle(alignment_file,
                                       alignment_format = alignment_format )
 
-    set_metadata(ribo_handle = ribo, 
-                 name        = "", 
+    set_metadata(ribo_handle = ribo,
+                 name        = "",
                  metadata    = ribo_metadata)
 
     create_experiment(
-        ribo_exp_handle       = ribo[EXPERIMENTS_name][experiment_name], 
-        experiment_name       = experiment_name, 
+        ribo_exp_handle       = ribo[EXPERIMENTS_name][experiment_name],
+        experiment_name       = experiment_name,
         alignment_file_handle = alignment_file_handle,
         metagene_radius       = metagene_radius,
         ref_names             = ref_names,
         ref_lengths           = ref_lengths,
         region_coordinates    = annotation ,
-        left_span             = left_span, 
+        left_span             = left_span,
         right_span            = right_span,
-        length_min            = length_min, 
+        length_min            = length_min,
         length_max            = length_max,
         store_coverage        = store_coverage,
-        metadata              = experiment_metadata, 
+        metadata              = experiment_metadata,
         nprocess              = nprocess,
         tmp_file_prefix       = tmp_file_prefix)
 
 
-        
+
 
 ############################################################################
 
-def create_ribo_file(ribo_file_path, experiment_name, 
+def create_ribo_file(ribo_file_path, experiment_name,
                      *argv, **kwargs):
     """
     Create a ribo file in the given file path.
@@ -697,8 +707,8 @@ def create_ribo_file(ribo_file_path, experiment_name,
     with h5py.File( ribo_file_path, "w" ) as ribo_handle:
         try:
             create_ribo(ribo_handle,
-                        experiment_name,  
-                        *argv, **kwargs, 
+                        experiment_name,
+                        *argv, **kwargs,
                         tmp_file_prefix = tmp_file_prefix)
         except RiboBaseError as e:
             ribo_handle.close()
@@ -709,7 +719,7 @@ def create_ribo_file(ribo_file_path, experiment_name,
             ribo_handle.close()
             os.remove(ribo_file_path)
             raise
-            
+
 
 ############################################################################
 

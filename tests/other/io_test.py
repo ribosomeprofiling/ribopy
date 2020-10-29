@@ -81,13 +81,13 @@ P53 5  8  read_UTR5_1 0  +
 P53 25  27  read_CDS_1 0  +"""
 
 #########################################
-#####  Expected EXTENDED ANNOTATION 
+#####  Expected EXTENDED ANNOTATION
 
 GAPDH_regions = ( (0, 15), (15, 24), (24, 45), (45, 54), (54, 90) )
 VEGFA_regions = ( (0, 0), (0, 4), (4, 5), (5, 12), (12, 12) )
 FLT_regions   = ( (0, 10), (10, 19), (19, 35), (35, 40), (40, 40) )
 MYC_regions   = ( (0, 0), (0, 1), (1, 1), (1, 1), (1, 1) )
-P53_regions   = ( (0, 15), (15, 24), (24, 50), (50, 59), (59, 85) ) 
+P53_regions   = ( (0, 15), (15, 24), (24, 50), (50, 59), (59, 85) )
 extended_boundary_regions = ( GAPDH_regions, VEGFA_regions,
                               FLT_regions, MYC_regions, P53_regions )
 #########################################
@@ -103,7 +103,7 @@ FLT_counts_all   = ( 0, 0, 0, 1, 0 )
 MYC_counts_all   = ( 0, 1, 0, 0, 0 )
 P53_counts_all   = ( 1, 0, 1, 0, 0 )
 
-expected_counts_all_lengths = ( GAPDH_counts_all, 
+expected_counts_all_lengths = ( GAPDH_counts_all,
                                 VEGFA_counts_all, FLT_counts_all,
                                 MYC_counts_all, P53_counts_all )
 
@@ -113,7 +113,7 @@ FLT_counts_1_to_3   = ( 0, 0, 0, 1, 0 )
 MYC_counts_1_to_3   = ( 0, 0, 0, 0, 0 )
 P53_counts_1_to_3   = ( 1, 0, 1, 0, 0 )
 
-expected_counts_1_to_3 = ( GAPDH_counts_1_to_3, 
+expected_counts_1_to_3 = ( GAPDH_counts_1_to_3,
                            VEGFA_counts_1_to_3, FLT_counts_1_to_3,
                            MYC_counts_1_to_3, P53_counts_1_to_3 )
 
@@ -123,7 +123,7 @@ FLT_counts_2_to_3   = ( 0, 0, 0, 1, 0 )
 MYC_counts_2_to_3   = ( 0, 0, 0, 0, 0 )
 P53_counts_2_to_3   = ( 1, 0, 1, 0, 0 )
 
-expected_counts_2_to_3 = ( GAPDH_counts_2_to_3, 
+expected_counts_2_to_3 = ( GAPDH_counts_2_to_3,
                            VEGFA_counts_2_to_3, FLT_counts_2_to_3,
                            MYC_counts_2_to_3, P53_counts_2_to_3 )
 
@@ -155,7 +155,7 @@ def _get_transcripts( file_in_string ):
 class TestSeparate(unittest.TestCase):
 
     def setUp(self):
-        self.handle = h5py.File(BytesIO())
+        self.handle = h5py.File(BytesIO(), "w")
         self.files_to_be_removed = list()
 
     def tearDown(self):
@@ -174,7 +174,7 @@ class TestSeparate(unittest.TestCase):
             length_2_lines = sep_stream.readlines()
             self.assertEqual(len(length_2_lines), 5)
             parsed_lines = [ k.strip().split() for k in length_2_lines ]
-            self.assertListEqual( parsed_lines[1] , 
+            self.assertListEqual( parsed_lines[1] ,
                      ['GAPDH', '20', '22', 'read_UTR5_junc_4', '0', '+'] )
 
         with open(separated_reads[0], "r") as sep_stream:
@@ -182,9 +182,9 @@ class TestSeparate(unittest.TestCase):
             self.assertEqual(len(length_1_lines), 3)
             parsed_lines = [ k.strip().split() for k in length_1_lines ]
             self.assertListEqual( parsed_lines[0] ,
-                     ['GAPDH', '14', '15', 'read_UTR5_7', '0', '+'])    
+                     ['GAPDH', '14', '15', 'read_UTR5_7', '0', '+'])
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

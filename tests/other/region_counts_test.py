@@ -76,13 +76,13 @@ P53 5  15  read_UTR5_1 0  +
 P53 25  35  read_CDS_1 0  +"""
 
 #########################################
-#####  Expected EXTENDED ANNOTATION 
+#####  Expected EXTENDED ANNOTATION
 
 GAPDH_regions = ( (0, 15), (15, 24), (24, 45), (45, 54), (54, 90) )
 VEGFA_regions = ( (0, 0), (0, 4), (4, 5), (5, 12), (12, 12) )
 FLT_regions   = ( (0, 10), (10, 19), (19, 35), (35, 40), (40, 40) )
 MYC_regions   = ( (0, 0), (0, 1), (1, 1), (1, 1), (1, 1) )
-P53_regions   = ( (0, 15), (15, 24), (24, 50), (50, 59), (59, 85) ) 
+P53_regions   = ( (0, 15), (15, 24), (24, 50), (50, 59), (59, 85) )
 extended_boundary_regions = ( GAPDH_regions, VEGFA_regions,
                               FLT_regions, MYC_regions, P53_regions )
 #########################################
@@ -131,8 +131,8 @@ class TestCreate(unittest.TestCase):
         self.ref_len_file    = StringIO(TRANSCRIPT_LENGTHS)
         self.annotation_file = StringIO(TRANSCRIPT_ANNOTATION)
         self.alignment_file  = StringIO(READ_SET_1)
-        self.handle          = h5py.File(BytesIO())
-        
+        self.handle          = h5py.File(BytesIO(), "w")
+
 
     def tearDown(self):
         self.handle.close()
@@ -144,30 +144,30 @@ class TestCreate(unittest.TestCase):
 
         coverage = find_coverage(input_stream,  ref_names , ref_lengths )
         extended_boundaries = \
-              get_extended_boundaries( annotation = ANNOTATION, 
-                                       left_span  = LEFT_SPAN, 
+              get_extended_boundaries( annotation = ANNOTATION,
+                                       left_span  = LEFT_SPAN,
                                        right_span = RIGHT_SPAN )
 
         for computed, expected in \
               zip(extended_boundaries , extended_boundary_regions):
-            self.assertTrue( computed == expected ) 
+            self.assertTrue( computed == expected )
 
-  
+
     def test_find_region_counts(self):
         input_stream = StringIO(READ_SET_1)
         ref_names , ref_lengths = _get_transcripts(TRANSCRIPT_LENGTHS)
 
         coverage = find_coverage(input_stream,  ref_names , ref_lengths )
-        rg = find_region_counts( coverage   = coverage, 
-                                 annotation = ANNOTATION, 
-                                 left_span  = LEFT_SPAN, 
+        rg = find_region_counts( coverage   = coverage,
+                                 annotation = ANNOTATION,
+                                 left_span  = LEFT_SPAN,
                                  right_span = RIGHT_SPAN)
 
         for i in range(5):
             comparison = (rg[i,: ] == expected_counts[i] )
-            self.assertTrue(np.all(comparison) ) 
+            self.assertTrue(np.all(comparison) )
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

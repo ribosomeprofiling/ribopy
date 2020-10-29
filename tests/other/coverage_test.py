@@ -48,7 +48,7 @@ def check_READ_SET_1(self, result):
     self.assertEqual( result["VEGFA"][4], 2 )
     self.assertEqual( result["VEGFA"][1], 1 )
     self.assertNotEqual( result["VEGFA"][0], 2 )
-    self.assertEqual( result["GAPDH"][2], 1 )    
+    self.assertEqual( result["GAPDH"][2], 1 )
 
 def _get_transcripts(file_in_string):
     rows = file_in_string.split("\n")
@@ -66,7 +66,7 @@ class TestCreate(unittest.TestCase):
         self.annotation_file  = StringIO( TRANSCRIPT_ANNOTATION )
         self.alignment_file   = StringIO(READ_SET_1)
 
-        self.handle = h5py.File(BytesIO())
+        self.handle = h5py.File(BytesIO(), "w")
 
     def tearDown(self):
         self.handle.close()
@@ -78,10 +78,10 @@ class TestCreate(unittest.TestCase):
         check_READ_SET_1(self, result)
 
     def test_coverage_from_ribo(self):
-        create.initialize(self.handle, "merzifon", 
+        create.initialize(self.handle, "merzifon",
                           reference_name = "appris_human_v2")
         create.set_reference_names_and_lengths(self.handle, self.ref_len_file)
-        create.set_annotation( h5_handle        = self.handle, 
+        create.set_annotation( h5_handle        = self.handle,
                                annotation_lines = TRANSCRIPT_ANNOTATION.split("\n") )
 
         input_stream = StringIO(READ_SET_1)
@@ -89,7 +89,7 @@ class TestCreate(unittest.TestCase):
         ref_lengths  = get_reference_lengths(self.handle)
         result       = find_coverage( input_stream, ref_names , ref_lengths )
         check_READ_SET_1(self, result)
-        
+
 
 if __name__ == '__main__':
     unittest.main()

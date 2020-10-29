@@ -8,18 +8,18 @@
 
  RiboPy is a set of tools to create, read and visualize .ribo files. It provides a Command Line Interface and Application Programming Interface to .ribo files.
 
-# Installation
+## Installation
 
-It is highly recommended to create and use a separate environment 
+It is highly recommended to create and use a separate environment
 using conda before installing RiboPy.
 
 `pip install ribopy`
 
 To install the latest version, use the code in Github
 
-`pip install git+https://github.com/ribosomeprofiling/ribopy.git` 
+`pip install git+https://github.com/ribosomeprofiling/ribopy.git`
 
-Although pip resolves dependencies and install required packages automatically,
+Although pip resolves dependencies and installs required packages automatically,
 it is highly recommended that you install the dependencies using conda prior to issuing the pip installation command.
 
 `conda env create -f environment.yml`
@@ -27,6 +27,8 @@ it is highly recommended that you install the dependencies using conda prior to 
 After the above command you can install RiboPy via pip, as shown above.
 
 
-# Documentation
+## Documentation
 
 RiboPy documentation, for both command-line interface (CLI) and application programming interface (API), is available on [Read the Docs](https://ribopy.readthedocs.io/en/latest/). Also, specification of [ribo file format](https://ribopy.readthedocs.io/en/latest/ribo_file_format.html) is included in this documentation.
+
+## [Release Notes](https://github.com/ribosomeprofiling/ribopy/blob/master/README.md)

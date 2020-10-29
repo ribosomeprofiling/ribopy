@@ -37,7 +37,7 @@ class TestCreate(unittest.TestCase):
         self.alignment_file   = StringIO(READ_SET_1)
         self.metadata_file    = StringIO(METADATA_EXPERIMENT_STR_1)
 
-        self.handle = h5py.File(BytesIO())
+        self.handle = h5py.File(BytesIO(), "w")
         create.initialize( self.handle, "merzifon", "hg38" )
         create.set_reference_names_and_lengths(
                  self.handle , self.ref_length_file)
@@ -51,18 +51,18 @@ class TestCreate(unittest.TestCase):
 
         create_experiment.create_experiment(
             ribo_exp_handle       = exp_handle,
-            experiment_name       = "merzifon", 
+            experiment_name       = "merzifon",
             alignment_file_handle = self.alignment_file,
-            ref_names             = ref_names, 
-            ref_lengths           = ref_lengths, 
+            ref_names             = ref_names,
+            ref_lengths           = ref_lengths,
             region_coordinates    = region_coordinates,
             metagene_radius       = METAGENE_RADIUS,
-            left_span             = LEFT_SPAN, 
+            left_span             = LEFT_SPAN,
             right_span            = RIGHT_SPAN,
-            length_min            = 2, 
+            length_min            = 2,
             length_max            = 5,
             metadata              = self.metadata_file,
-            store_coverage        = True, 
+            store_coverage        = True,
             nprocess              = 4)
 
     def tearDown(self):
@@ -96,7 +96,7 @@ class TestCreate(unittest.TestCase):
         region_counts_handle = \
           self.handle[EXPERIMENTS_name]["merzifon"][REF_DG_REGION_COUNTS]
         region_counts_all = region_counts_handle[REF_DG_REGION_COUNTS][...]
-        
+
         len_3_offset = 3
         #( 2, 7, 3, 9 , 0 )
         self.assertTrue(np.all(GAPDH_counts_length_3 == \
@@ -123,10 +123,10 @@ class TestCreate(unittest.TestCase):
         coverage_handle = \
             self.handle[EXPERIMENTS_name]["merzifon"][REF_DG_COVERAGE]
 
-        all_coverage = coverage_handle[REF_DG_COVERAGE][...]    
+        all_coverage = coverage_handle[REF_DG_COVERAGE][...]
 
         transcriptome_size = 20 + 22 + 17
-        
+
         # GAPDH, len = 2, pos = 4
         # offset is 0 brcause 2 is the first length
         # and gapdh is the first gene
@@ -159,7 +159,7 @@ class TestCreate(unittest.TestCase):
         total_reads = exp_handle.attrs[ATTRS_TOTAL_READS]
 
         # In the test data there are 128 lines
-        self.assertEqual(total_reads, 118) 
+        self.assertEqual(total_reads, 118)
 
 
     def test_exp_metadata(self):
@@ -168,7 +168,7 @@ class TestCreate(unittest.TestCase):
         metadata = yaml.safe_load(exp_handle.attrs.get(USER_METADATA, ""))
 
         self.assertEqual( metadata["cell_line"], "HeLa" )
-        self.assertEqual( metadata["link"], 
+        self.assertEqual( metadata["link"],
                             "https://www.encodeproject.org/" )
         self.assertEqual( metadata["digestion_duration"], "5 min" )
 
@@ -188,9 +188,9 @@ class TestCreateFromMetaFile(unittest.TestCase):
         self.alignment_file   = StringIO(READ_SET_1)
         self.metadata_file    = StringIO(METADATA_EXPERIMENT_STR_1)
 
-        self.handle = h5py.File(BytesIO())
+        self.handle = h5py.File(BytesIO(), "w")
         create.initialize( self.handle, "merzifon", "hg38" )
-        create.set_reference_names_and_lengths(self.handle , 
+        create.set_reference_names_and_lengths(self.handle ,
                                                self.ref_length_file)
         create.set_annotation( self.handle, self.annotation_lines )
 
@@ -201,18 +201,18 @@ class TestCreateFromMetaFile(unittest.TestCase):
         exp_handle = self.handle[EXPERIMENTS_name]["merzifon"]
 
         create_experiment.create_experiment(
-            ribo_exp_handle       = exp_handle, 
-            experiment_name          = "merzifon", 
+            ribo_exp_handle       = exp_handle,
+            experiment_name          = "merzifon",
             alignment_file_handle = self.alignment_file,
-            ref_names             = ref_names, 
-            ref_lengths           = ref_lengths, 
+            ref_names             = ref_names,
+            ref_lengths           = ref_lengths,
             region_coordinates    = region_coordinates,
             metagene_radius       = METAGENE_RADIUS,
-            left_span             = LEFT_SPAN, 
+            left_span             = LEFT_SPAN,
             right_span            = RIGHT_SPAN,
-            length_min            = 2, 
+            length_min            = 2,
             length_max            = 5,
-            metadata              = self.metadata_file, 
+            metadata              = self.metadata_file,
             nprocess              = 4)
 
 
@@ -231,7 +231,7 @@ class TestCreateFromMetaFile(unittest.TestCase):
         self.assertEqual( metadata_handle["cell_line"] , "HeLa" )
         self.assertEqual( metadata_handle["digestion_enzyme"], "HindIII" )
         self.assertEqual( metadata_handle["digestion_duration"], "5 min" )
-        self.assertEqual( metadata_handle["link"], 
+        self.assertEqual( metadata_handle["link"],
                           "https://www.encodeproject.org/" )
         """
 
@@ -239,5 +239,5 @@ class TestCreateFromMetaFile(unittest.TestCase):
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

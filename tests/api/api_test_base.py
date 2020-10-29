@@ -33,39 +33,39 @@ class ApiTestBase(unittest.TestCase):
         self.alignment_file_1   = StringIO(READ_SET_1)
         self.alignment_file_2   = StringIO(READ_SET_2)
 
-        self.handle   = h5py.File(BytesIO() )
-        self.handle_2 = h5py.File(BytesIO() )
+        self.handle   = h5py.File(BytesIO(), "w" )
+        self.handle_2 = h5py.File(BytesIO(), "w" )
 
         create.create_ribo(
-                ribo            = self.handle, 
-                experiment_name = "merzifon", 
+                ribo            = self.handle,
+                experiment_name = "merzifon",
                 alignment_file  = self.alignment_file_1,
                 reference_name  = "hg38",
-                lengths_file    = self.ref_len_file, 
+                lengths_file    = self.ref_len_file,
                 annotation_file = self.annotation_file,
-                metagene_radius = METAGENE_RADIUS, 
-                left_span       = LEFT_SPAN, 
+                metagene_radius = METAGENE_RADIUS,
+                left_span       = LEFT_SPAN,
                 right_span      = RIGHT_SPAN,
                 length_min      = 2,
                 length_max      = 5,
-                store_coverage  = False,  
+                store_coverage  = False,
                 nprocess        = NPROCESS,
                 tmp_file_prefix = "")
         self.ref_len_file.seek(0)
         self.annotation_file.seek(0)
         self.alignment_file_1 = StringIO(READ_SET_1)
-        
+
         set_metadata(self.handle, "merzifon", METADATA_EXPERIMENT_DICT)
-        
+
         create.create_ribo(
-                ribo            = self.handle_2, 
-                experiment_name = "ankara", 
+                ribo            = self.handle_2,
+                experiment_name = "ankara",
                 alignment_file  = self.alignment_file_2,
                 reference_name  = "hg38",
-                lengths_file    = self.ref_len_file, 
+                lengths_file    = self.ref_len_file,
                 annotation_file = self.annotation_file,
-                metagene_radius = METAGENE_RADIUS, 
-                left_span       = LEFT_SPAN, 
+                metagene_radius = METAGENE_RADIUS,
+                left_span       = LEFT_SPAN,
                 right_span      = RIGHT_SPAN,
                 length_min      = 2,
                 length_max      = 5,
@@ -79,11 +79,11 @@ class ApiTestBase(unittest.TestCase):
         self.merged_io   = BytesIO()
         self.merged_ribo = h5py.File(self.merged_io, "w")
         merge_ribos( self.merged_ribo, [self.handle , self.handle_2] )
-        set_metadata(self.merged_ribo, 
-                     name     = None, 
+        set_metadata(self.merged_ribo,
+                     name     = None,
                      metadata = RIBO_METADATA_STR_1)
         self.merged_ribo.close()
-        
+
         self.sample_ribo = Ribo( self.merged_io )
 
     def tearDown(self):

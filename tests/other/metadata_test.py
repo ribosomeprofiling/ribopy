@@ -34,15 +34,15 @@ class TestCreate(unittest.TestCase):
         self.annotation_file = StringIO(TRANSCRIPT_ANNOTATION)
         self.alignment_file  = StringIO(READ_SET_1)
 
-        self.handle = h5py.File(BytesIO())
+        self.handle = h5py.File(BytesIO(), "w")
 
-        create.create_ribo(     self.handle, "merzifon", 
+        create.create_ribo(     self.handle, "merzifon",
                                 alignment_file  = self.alignment_file,
                                 reference_name  = "appris_human_v2",
                                 length_min      = 2,
                                 length_max      = 5,
                                 metagene_radius = METAGENE_RADIUS,
-                                left_span       = LEFT_SPAN, 
+                                left_span       = LEFT_SPAN,
                                 right_span      = RIGHT_SPAN,
                                 lengths_file    = self.ref_len_file,
                                 store_coverage  = True,
@@ -81,7 +81,7 @@ class TestCreate(unittest.TestCase):
         # Invalid Metadata
 
         invalid_metadata = "nonsens : 3\tsome-sense : 89"
-        error = set_metadata(self.handle, "", invalid_metadata) 
+        error = set_metadata(self.handle, "", invalid_metadata)
         self.assertTrue("Invalid" in error)
 
     def test_get_metadata(self):
@@ -113,8 +113,8 @@ class TestCreate(unittest.TestCase):
 
 
 
-    
+
 
 if __name__ == '__main__':
-        
+
     unittest.main()

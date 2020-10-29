@@ -34,24 +34,24 @@ class TestCreate(unittest.TestCase):
         self.annotation_file = StringIO(TRANSCRIPT_ANNOTATION)
         self.alignment_file  = StringIO(READ_SET_1)
 
-        self.handle = h5py.File(BytesIO())
+        self.handle = h5py.File(BytesIO(), "w")
 
-        create.create_ribo(self.handle, 
-                experiment_name        = "merzifon", 
+        create.create_ribo(self.handle,
+                experiment_name        = "merzifon",
                 alignment_file      = self.alignment_file,
                 reference_name      = "hg38",
-                lengths_file        = self.len_file, 
+                lengths_file        = self.len_file,
                 annotation_file     = self.annotation_file,
-                metagene_radius     = METAGENE_RADIUS, 
+                metagene_radius     = METAGENE_RADIUS,
                 left_span = LEFT_SPAN, right_span = RIGHT_SPAN,
-                length_min = 2, length_max = 5, 
+                length_min = 2, length_max = 5,
                 tmp_file_prefix     = "")
-        
+
     def tearDown(self):
         self.handle.close()
 
 
-    ### T E S T    S U M S  ################################    
+    ### T E S T    S U M S  ################################
 
     def test_aggregate_region_sum(self):
         aggregate_2_3_region = aggregate_region_counts(
@@ -146,7 +146,7 @@ class TestCreate(unittest.TestCase):
                                  self.handle, range_lower = 4, range_upper =5,
                                  sum_values = False )
 
-        length_col  = np.repeat( range(4,5+1), 
+        length_col  = np.repeat( range(4,5+1),
                                  len( ACTUAL_START_SITE_COVERAGE_length_4 ) )
         length_col =  np.array( length_col, ndmin=2 )
 
@@ -177,5 +177,5 @@ class TestCreate(unittest.TestCase):
 
 
 if __name__ == '__main__':
-        
+
     unittest.main()

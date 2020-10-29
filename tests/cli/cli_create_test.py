@@ -43,14 +43,14 @@ class TestCLIBase(unittest.TestCase):
       """
 
       command_str    = tuple( map( str, command ) )
-      process        = subprocess.Popen(command_str, 
+      process        = subprocess.Popen(command_str,
                                         stdout = subprocess.PIPE,
                                         stderr = subprocess.PIPE)
       output, error  = process.communicate()
       output_str     = output.decode()
       error_str      = error.decode()
 
-      return (output_str, error_str) 
+      return (output_str, error_str)
 
     def setUp(self):
         self.tmp_files = list()
@@ -79,17 +79,17 @@ class TestCLIBase(unittest.TestCase):
         if os.path.isfile(ribo_output_file):
             os.remove(ribo_output_file)
 
-        create_command = ["ribopy", "create", 
+        create_command = ["ribopy", "create",
                           "--name",           "merzifon",
-                          "--alignmentfile",  ALIGNMENT_FILE_1, 
+                          "--alignmentfile",  ALIGNMENT_FILE_1,
                           "--reference",      "hg38",
-                          "--lengths",        REF_LEN_FILE, 
+                          "--lengths",        REF_LEN_FILE,
                           "--annotation",     ANNOTATION_FILE,
-                          "--metageneradius", METAGENE_RADIUS, 
-                          "--leftspan",       LEFT_SPAN, 
+                          "--metageneradius", METAGENE_RADIUS,
+                          "--leftspan",       LEFT_SPAN,
                           "--rightspan",      RIGHT_SPAN,
-                          "--lengthmin",      2, 
-                          "--lengthmax",      5, 
+                          "--lengthmin",      2,
+                          "--lengthmax",      5,
                           "--expmeta",        METADATA_FILE_1,
                           "--ribometa",       RIBO_META_FILE_1,
                           "-n",               4,
@@ -109,7 +109,7 @@ class TestCLIBase(unittest.TestCase):
         pass
         [ os.remove(f) for f in self.tmp_files ]
 
-#######################################################################        
+#######################################################################
 
 #@unittest.skip("temporarily skipping plot tests")
 class TestCLICreate(TestCLIBase):
@@ -139,22 +139,22 @@ class TestCLICreate(TestCLIBase):
     def test_exp_name_from_path(self):
         """
         If the name is not provided,
-        it can be extracted from the filepath. 
+        it can be extracted from the filepath.
         """
 
         ribo_experiment_file = "this_file.ribo"
         self.tmp_files.append(ribo_experiment_file)
 
-        create_command = ["ribopy", "create", 
-                          "--alignmentfile",  ALIGNMENT_FILE_1, 
+        create_command = ["ribopy", "create",
+                          "--alignmentfile",  ALIGNMENT_FILE_1,
                           "--reference",      "hg38",
-                          "--lengths",        REF_LEN_FILE, 
+                          "--lengths",        REF_LEN_FILE,
                           "--annotation",     ANNOTATION_FILE,
-                          "--metageneradius", METAGENE_RADIUS, 
-                          "--leftspan",       LEFT_SPAN, 
+                          "--metageneradius", METAGENE_RADIUS,
+                          "--leftspan",       LEFT_SPAN,
                           "--rightspan",      RIGHT_SPAN,
-                          "--lengthmin",      2, 
-                          "--lengthmax",      5, 
+                          "--lengthmin",      2,
+                          "--lengthmax",      5,
                           "--expmeta",        METADATA_FILE_1,
                           "--ribometa",       RIBO_META_FILE_1,
                           "-n",               4,
@@ -186,26 +186,26 @@ class TestCLICreate(TestCLIBase):
         pipe_t = pipes.Template()
         pipe_t.append("bedToBam -g {}"\
                       .format( REF_LEN_FILE), "--")
-      
+
         f = pipe_t.open(ALIGNMENT_FILE_BAM_1, 'w')
         f.write(self.READ_SET_1_str)
         f.close()
-        
+
         if not os.path.isfile(ALIGNMENT_FILE_BAM_1):
             raise FileNotFoundError("Couldnt convert bed file to bam.")
 
-        create_command = ["ribopy", "create", 
+        create_command = ["ribopy", "create",
                           "--name",            "merzifon",
                           "--alignmentfile",   ALIGNMENT_FILE_BAM_1,
-                          "--alignmentformat", "bam", 
+                          "--alignmentformat", "bam",
                           "--reference",       "hg38",
-                          "--lengths",         REF_LEN_FILE, 
+                          "--lengths",         REF_LEN_FILE,
                           "--annotation",      ANNOTATION_FILE,
-                          "--metageneradius",  METAGENE_RADIUS, 
-                          "--leftspan",        LEFT_SPAN, 
+                          "--metageneradius",  METAGENE_RADIUS,
+                          "--leftspan",        LEFT_SPAN,
                           "--rightspan",       RIGHT_SPAN,
-                          "--lengthmin",       2, 
-                          "--lengthmax",       5, 
+                          "--lengthmin",       2,
+                          "--lengthmax",       5,
                           "--expmeta",         METADATA_FILE_1,
                           "--ribometa",        RIBO_META_FILE_1,
                           "-n",                4,
@@ -221,12 +221,10 @@ class TestCLICreate(TestCLIBase):
 
 class TestCLIMetadata(TestCLIBase):
 
-    
     #######################################################
 
-
     def test_ribo_metadata(self):
-        command_pieces = [ "ribopy", "metadata" , "get", 
+        command_pieces = [ "ribopy", "metadata" , "get",
                             ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
@@ -234,11 +232,11 @@ class TestCLIMetadata(TestCLIBase):
 
 
     def test_delete_ribo_metadata(self):
-        command_pieces = [ "ribopy", "metadata" , "delete", 
+        command_pieces = [ "ribopy", "metadata" , "delete",
                             "--force", ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
-        command_pieces = [ "ribopy", "metadata" , "get", 
+        command_pieces = [ "ribopy", "metadata" , "get",
                             ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
@@ -246,7 +244,7 @@ class TestCLIMetadata(TestCLIBase):
 
 
     def test_experiment_metadata(self):
-        command_pieces = [ "ribopy", "metadata" , "get", 
+        command_pieces = [ "ribopy", "metadata" , "get",
                            "--name", "merzifon",
                            ribo_output_file ]
         output, error  = self.run_command(command_pieces)
@@ -255,12 +253,12 @@ class TestCLIMetadata(TestCLIBase):
 
 
     def test_delete_experiment_metadata(self):
-        command_pieces = [ "ribopy", "metadata" , "delete", 
+        command_pieces = [ "ribopy", "metadata" , "delete",
                            "--name", "merzifon",
                             "--force", ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
-        command_pieces = [ "ribopy", "metadata" , "get", 
+        command_pieces = [ "ribopy", "metadata" , "get",
                            "--name", "merzifon",
                             ribo_output_file ]
         output, error  = self.run_command(command_pieces)
@@ -279,11 +277,11 @@ class TestCLIMetadata(TestCLIBase):
         self.tmp_files.append(new_ribo_meta_file)
 
         command_pieces = [ "ribopy", "metadata" , "set",
-                           "--meta",   new_ribo_meta_file, 
+                           "--meta",   new_ribo_meta_file,
                             "--force", ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
-        command_pieces = [ "ribopy", "metadata" , "get", 
+        command_pieces = [ "ribopy", "metadata" , "get",
                             ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
@@ -298,12 +296,12 @@ class TestCLIMetadata(TestCLIBase):
         self.tmp_files.append(new_exp_meta_file)
 
         command_pieces = [ "ribopy", "metadata" , "set",
-                           "--meta", new_exp_meta_file, 
+                           "--meta", new_exp_meta_file,
                            "--name", "merzifon",
                             "--force", ribo_output_file ]
         output, error  = self.run_command(command_pieces)
 
-        command_pieces = [ "ribopy",  "metadata" , "get", 
+        command_pieces = [ "ribopy",  "metadata" , "get",
                            "--name", "merzifon",
                             ribo_output_file ]
         output, error  = self.run_command(command_pieces)
@@ -315,5 +313,5 @@ class TestCLIMetadata(TestCLIBase):
 ###########################################################
 
 if __name__ == '__main__':
-        
+
     unittest.main()
