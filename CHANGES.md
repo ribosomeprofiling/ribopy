@@ -1,13 +1,15 @@
-# Release notes
+# Release Notes
 
-## [Latest](https://github.com/ribosomeprofiling/ribopy/)
+## [v0.0.1](https://github.com/ribosomeprofiling/ribopy/tree/v0.0.1)
 
-### Enhancements
+Date: 10-29-2020
 
-* Improved documentation
+### Enhancements  
 
-## [v0.0.0](https://github.com/ribosomeprofiling/ribopy/tree/v0.0.0)
+* RiboPy supports transcripts with no 5' or 3' UTR.
 
-Date: 09/19/2019
+## [v0.0.0](https://github.com/ribosomeprofiling/ribopy/tree/v0.0.1)
 
-* Working initial version.
+Date: 09-19-2019
+
+* Initial Release

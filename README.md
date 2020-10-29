@@ -31,4 +31,4 @@ After the above command you can install RiboPy via pip, as shown above.
 
 RiboPy documentation, for both command-line interface (CLI) and application programming interface (API), is available on [Read the Docs](https://ribopy.readthedocs.io/en/latest/). Also, specification of [ribo file format](https://ribopy.readthedocs.io/en/latest/ribo_file_format.html) is included in this documentation.
 
-## [Release Notes](https://github.com/ribosomeprofiling/ribopy/blob/master/README.md)
+## [Release Notes](https://github.com/ribosomeprofiling/ribopy/blob/master/CHANGES.md)
