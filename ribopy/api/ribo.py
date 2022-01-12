@@ -113,7 +113,7 @@ class Ribo:
         self._handle.close()
         
     def close(self):
-        self.handle.close()
+        self._handle.close()
 
     ######## P R O P E R T I E S ############################
         
@@ -207,7 +207,7 @@ class Ribo:
         
         if not self._transcript_lengths:
             transcript_lengths       = get_reference_lengths(self._handle)
-            self._transcript_lengths = dict( zip(self.transcript_names,
+            self._transcript_lengths = dict( zip(self._transcript_names,
                                                  transcript_lengths) )
             
         return self._transcript_lengths
@@ -225,7 +225,7 @@ class Ribo:
         
         if not self._transcript_index:
             self._transcript_index = dict( map ( lambda x: (x[1], x[0]),
-                                                 enumerate(self.transcript_names) ))
+                                                 enumerate(self._transcript_names) ))
                                                     
         return self._transcript_index    
         
@@ -242,7 +242,7 @@ class Ribo:
         offset = 0
         
         if not self._transcipt_offsets:
-            for x in self.transcript_names:
+            for x in self._transcript_names:
                 self._transcipt_offsets[x] = offset
                 offset += self.transcript_lengths[x]
         
