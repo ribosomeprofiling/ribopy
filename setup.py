@@ -38,7 +38,7 @@ def get_long_description():
 install_requires = [
     'numpy>=1.16.1',
     'pandas>=0.24.1',
-    'click==7.0',
+    'click>=7.0',
     'h5py>=2.9.0',
     'matplotlib>=3.0.2',
     'multiprocess>=0.70.7',
